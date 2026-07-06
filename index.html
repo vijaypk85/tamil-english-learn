@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>நூல் — Learn English through Tamil</title>
+<meta name="description" content="Free English grammar and spoken English learning site for Tamil speakers, with an AI chat tutor giving real-time bilingual examples.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Noto+Serif+Tamil:wght@500;700&family=Inter:wght@400;500;600&family=Noto+Sans+Tamil:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">நூல்</div>
+      <div class="brand-text">
+        <span class="brand-en">Learn English</span>
+        <span class="brand-ta">தமிழில் ஆங்கிலம்</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">☰</button>
+    </div>
+
+    <div class="key-box" id="keyBox">
+      <div class="key-box-label">Groq API key <span class="key-box-label-ta">(உங்கள் திறவுகோல்)</span></div>
+      <div class="key-row">
+        <input type="password" id="apiKeyInput" placeholder="gsk_..." autocomplete="off" spellcheck="false" />
+        <button type="button" id="verifyKeyBtn">Verify</button>
+      </div>
+      <p class="key-status" id="keyStatus">Not connected yet.</p>
+      <a class="key-help" href="https://console.groq.com/keys" target="_blank" rel="noopener">Get a free key at console.groq.com →</a>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progressCount">0 / 28</span> topics threaded
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <nav class="topic-path" id="topicPath" aria-label="Learning path"></nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <section class="hero" id="hero">
+      <div class="hero-thread" aria-hidden="true">
+        <svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0,20 C60,0 90,40 150,20 C210,0 240,40 300,20 C330,10 360,30 400,20" /></svg>
+      </div>
+      <h1 class="hero-en">Weave two languages into one habit.</h1>
+      <p class="hero-ta">இரு மொழிகளையும் ஒரு பழக்கமாக நெய்யுங்கள்.</p>
+      <p class="hero-sub">Pick a topic on the left — a real learning path, Beginner to Advanced. Then ask the tutor anything. Every explanation comes with live examples in both English and Tamil.</p>
+      <button class="hero-cta" id="startBtn">Start with Topic 1 →</button>
+    </section>
+
+    <section class="topic-view" id="topicView" hidden>
+      <header class="topic-header">
+        <div class="topic-id" id="topicId">01</div>
+        <div class="topic-titles">
+          <h2 class="topic-en" id="topicEn">—</h2>
+          <p class="topic-ta" id="topicTa">—</p>
+        </div>
+        <span class="topic-level" id="topicLevel">Beginner</span>
+      </header>
+
+      <div class="chat-thread" id="chatThread"></div>
+
+      <form class="chat-input-row" id="chatForm">
+        <input
+          type="text"
+          id="chatInput"
+          placeholder="Ask a question, or type 'give me 3 examples'…"
+          autocomplete="off"
+        />
+        <button type="submit" id="sendBtn">Send</button>
+      </form>
+      <p class="chat-hint">உங்கள் கேள்வியை தமிழிலோ ஆங்கிலத்திலோ எழுதலாம் — you can ask in Tamil or English.</p>
+    </section>
+
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
