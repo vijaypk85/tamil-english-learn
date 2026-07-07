@@ -30,6 +30,7 @@ const TOPICS = [
   { id: 26, en: "Business & Academic English", ta: "வணிக & கல்வி ஆங்கிலம்", level: "Advanced" },
   { id: 27, en: "Writing Skills", ta: "எழுத்துத் திறன்கள்", level: "Advanced" },
   { id: 28, en: "Spoken English Practice", ta: "பேச்சு ஆங்கில பயிற்சி", level: "Advanced" },
+  { id: 29, en: "Phrasal Verbs", ta: "மொழிப்புணர்ச்சி வினைச்சொற்கள்", level: "Advanced" },
 ];
 
 const GROUPS = ["Beginner", "Intermediate", "Advanced"];
