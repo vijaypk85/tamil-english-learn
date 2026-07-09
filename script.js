@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------
-// Topic data — 30 topics, Beginner -> Advanced, English + Tamil
+// Topic data — 31 topics, Beginner -> Advanced, English + Tamil
 // ---------------------------------------------------------------
 const TOPICS = [
   { id: 1, en: "Parts of Speech", ta: "சொல் வகைகள்", level: "Beginner" },
@@ -32,10 +32,12 @@ const TOPICS = [
   { id: 28, en: "Spoken English Practice", ta: "பேச்சு ஆங்கில பயிற்சி", level: "Advanced" },
   { id: 29, en: "Phrasal Verbs", ta: "மொழிப்புணர்ச்சி வினைச்சொற்கள்", level: "Advanced" },
   { id: 30, en: "Public Speaking", ta: "பொதுப் பேச்சு", level: "Advanced" },
+  { id: 31, en: "Voice Practice", ta: "குரல் பயிற்சி", level: "Advanced" },
 ];
 
 const GROUPS = ["Beginner", "Intermediate", "Advanced"];
 const PUBLIC_SPEAKING_TOPIC_ID = 30;
+const VOICE_PRACTICE_TOPIC_ID = 31;
 
 // ---------------------------------------------------------------
 // State
@@ -172,8 +174,8 @@ function renderSidebar() {
 }
 
 function updateProgressBar() {
-  document.getElementById("progressCount").textContent = `${completed.size} / 30`;
-  document.getElementById("progressFill").style.width = `${(completed.size / 30) * 100}%`;
+  document.getElementById("progressCount").textContent = `${completed.size} / 31`;
+  document.getElementById("progressFill").style.width = `${(completed.size / 31) * 100}%`;
 }
 
 // ---------------------------------------------------------------
@@ -186,6 +188,7 @@ const chatThreadEl = document.getElementById("chatThread");
 function selectTopic(id) {
   const topic = TOPICS.find((t) => t.id === id);
   if (!topic) return;
+  if (isRecording) stopRecording();
   currentTopic = topic;
   completed.add(id);
   saveProgress();
@@ -197,6 +200,12 @@ function selectTopic(id) {
   document.getElementById("topicEn").textContent = topic.en;
   document.getElementById("topicTa").textContent = topic.ta;
   document.getElementById("topicLevel").textContent = topic.level;
+
+  const isVoiceTopic = topic.id === VOICE_PRACTICE_TOPIC_ID;
+  chatForm.hidden = isVoiceTopic;
+  if (voiceControlsEl) voiceControlsEl.hidden = !isVoiceTopic;
+  const chatHintEl = document.getElementById("chatHint");
+  if (chatHintEl) chatHintEl.hidden = isVoiceTopic;
 
   renderSidebar();
   renderChat();
@@ -216,6 +225,12 @@ function selectTopic(id) {
       appendMessage(
         "bot",
         "**Type any topic** you'd like a public speaking passage on — e.g. \"leadership\", \"climate change\", \"my school\".\n\nI'll share 10–20 lines, with the important verbs in **bold** and their Tamil meaning right after in brackets.\n\n(நீங்கள் பேச விரும்பும் தலைப்பை தட்டச்சு செய்யவும் — எ.கா. \"தலைமைத்துவம்\". முக்கியமான வினைச்சொற்கள் **தடிமனாக** காட்டப்பட்டு, அதற்கடுத்து அதன் தமிழ் அர்த்தம் அடைப்புக்குறிக்குள் தரப்படும்.)"
+      );
+    } else if (topic.id === VOICE_PRACTICE_TOPIC_ID) {
+      // Voice Practice works by mic, not typing: explain the flow up front.
+      appendMessage(
+        "bot",
+        "**Tap the mic button below and speak a sentence** — in English, or mixed with Tamil, whatever feels natural. I'll correct the grammar and tone, and you can tap **Play** on my reply to hear the correct version spoken aloud.\n\n(கீழே உள்ள மைக் பொத்தானைத் தட்டி ஒரு வாக்கியம் பேசுங்கள். நான் இலக்கணத்தையும் தொனியையும் திருத்துவேன்.)"
       );
     } else {
       // Kick off with an automatic introduction from the tutor
@@ -245,6 +260,16 @@ function appendMessage(role, content, scroll = true) {
   bubble.className = "bubble";
   bubble.innerHTML = formatContent(content);
   wrap.appendChild(bubble);
+
+  if (role === "bot" && currentTopic?.id === VOICE_PRACTICE_TOPIC_ID) {
+    const speakBtn = document.createElement("button");
+    speakBtn.type = "button";
+    speakBtn.className = "speak-btn";
+    speakBtn.textContent = "🔊 Play";
+    speakBtn.addEventListener("click", () => speakText(content));
+    wrap.appendChild(speakBtn);
+  }
+
   chatThreadEl.appendChild(wrap);
   if (scroll) chatThreadEl.scrollTop = chatThreadEl.scrollHeight;
   return wrap;
@@ -356,6 +381,145 @@ async function sendToTutor(userText, opts = {}) {
   } finally {
     sendBtn.disabled = false;
   }
+}
+
+// ---------------------------------------------------------------
+// Voice Practice: record -> transcribe (Groq Whisper) -> tutor correction
+// ---------------------------------------------------------------
+const micBtn = document.getElementById("micBtn");
+const voiceStatusEl = document.getElementById("voiceStatus");
+const voiceControlsEl = document.getElementById("voiceControls");
+
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecording = false;
+let autoStopTimer = null;
+const MAX_RECORD_MS = 20000; // keep clips short so the base64 payload stays small
+
+function setVoiceStatus(text) {
+  if (voiceStatusEl) voiceStatusEl.textContent = text;
+}
+
+async function startRecording() {
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+    setVoiceStatus("Your browser doesn't support microphone recording. Try Chrome or Safari.");
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recordedChunks = [];
+    const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+    mediaRecorder = new MediaRecorder(stream, { mimeType });
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) recordedChunks.push(e.data);
+    };
+    mediaRecorder.onstop = () => {
+      stream.getTracks().forEach((t) => t.stop());
+      handleRecordingStop(mimeType);
+    };
+
+    mediaRecorder.start();
+    isRecording = true;
+    micBtn.classList.add("recording");
+    micBtn.textContent = "⏹ Stop";
+    setVoiceStatus("Listening… tap Stop when you're done. (20s max)");
+
+    autoStopTimer = setTimeout(() => {
+      if (isRecording) stopRecording();
+    }, MAX_RECORD_MS);
+  } catch (err) {
+    console.error(err);
+    setVoiceStatus("Couldn't access the microphone. Check browser permissions and try again.");
+  }
+}
+
+function stopRecording() {
+  if (!mediaRecorder || !isRecording) return;
+  clearTimeout(autoStopTimer);
+  isRecording = false;
+  micBtn.classList.remove("recording");
+  micBtn.textContent = "🎤 Tap to speak";
+  mediaRecorder.stop();
+}
+
+async function handleRecordingStop(mimeType) {
+  if (!currentTopic || currentTopic.id !== VOICE_PRACTICE_TOPIC_ID) return;
+
+  if (!apiKeyVerified) {
+    appendMessage(
+      "bot",
+      "**Add your free Groq API key** in the box on the left, then click **Verify**, before recording.\n\n(முதலில் இடதுபுறம் Groq திறவுகோலைச் சேர்த்து 'Verify' அழுத்தவும்.)"
+    );
+    return;
+  }
+
+  const blob = new Blob(recordedChunks, { type: mimeType });
+  if (blob.size < 1000) {
+    setVoiceStatus("That was too short — tap and speak a full sentence.");
+    return;
+  }
+
+  setVoiceStatus("Transcribing…");
+  micBtn.disabled = true;
+
+  try {
+    const audioBase64 = await blobToBase64(blob);
+    const res = await fetch("/api/transcribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ audioBase64, mimeType, apiKey: getStoredKey() }),
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      if (data.error === "invalid_key") {
+        apiKeyVerified = false;
+        setKeyStatus(data.message || "Your Groq key needs to be re-verified.", "err");
+      }
+      setVoiceStatus(data.message || "Couldn't transcribe that — please try again.");
+      return;
+    }
+    if (!data.text) {
+      setVoiceStatus(data.message || "Didn't catch that — please try again.");
+      return;
+    }
+
+    setVoiceStatus("Tap the mic to speak again.");
+    sendToTutor(data.text);
+  } catch (err) {
+    console.error(err);
+    setVoiceStatus("Connection error while transcribing. Try again.");
+  } finally {
+    micBtn.disabled = false;
+  }
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(",")[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+if (micBtn) {
+  micBtn.addEventListener("click", () => {
+    if (isRecording) stopRecording();
+    else startRecording();
+  });
+}
+
+// Reads a bot reply aloud using the browser's built-in text-to-speech —
+// no extra API needed. Strips markdown so it doesn't say "asterisk asterisk".
+function speakText(text) {
+  if (!("speechSynthesis" in window)) return;
+  const plain = text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/`(.+?)`/g, "$1");
+  const utter = new SpeechSynthesisUtterance(plain);
+  utter.lang = "en-IN";
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
 }
 
 // ---------------------------------------------------------------
