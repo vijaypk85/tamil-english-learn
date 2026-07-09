@@ -31,7 +31,6 @@ const TOPICS = [
   { id: 27, en: "Writing Skills", ta: "எழுத்துத் திறன்கள்", level: "Advanced" },
   { id: 28, en: "Spoken English Practice", ta: "பேச்சு ஆங்கில பயிற்சி", level: "Advanced" },
   { id: 29, en: "Phrasal Verbs", ta: "மொழிப்புணர்ச்சி வினைச்சொற்கள்", level: "Advanced" },
-  { id: 30, en: "Public Speaking", ta: "பொது பேச்சு", level: "Advanced" },
 ];
 
 const GROUPS = ["Beginner", "Intermediate", "Advanced"];
@@ -317,18 +316,23 @@ async function sendToTutor(userText, opts = {}) {
 
     if (!res.ok) {
       typingEl.remove();
-      appendMessage(
-        "bot",
-        "**Something went wrong** reaching the tutor. Please try again in a moment.\n\n(சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்.)"
-      );
+      if (data.error === "missing_key" || data.error === "invalid_key") {
+        apiKeyVerified = false;
+        setKeyStatus(data.message || "Your Groq key needs to be re-verified.", "err");
+        appendMessage(
+          "bot",
+          `**${data.message || "Your Groq key needs to be re-verified."}**\n\n(உங்கள் திறவுகோலை மீண்டும் சரிபார்க்கவும்.)`
+        );
+      } else {
+        appendMessage(
+          "bot",
+          "**Something went wrong** reaching the tutor. Please try again in a moment.\n\n(சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்.)"
+        );
+      }
       return;
     }
 
-    let reply = data.reply || "Sorry, I couldn't generate a reply just now. Please try again.";
-    if (topic.en === "Public Speaking") {
-      reply = generatePublicSpeakingContent(userText);
-    }
-
+    const reply = data.reply || "Sorry, I couldn't generate a reply just now. Please try again.";
     typingEl.remove();
     conversations[topic.id].push({ role: "bot", content: reply });
     appendMessage("bot", reply);
@@ -343,27 +347,6 @@ async function sendToTutor(userText, opts = {}) {
   } finally {
     sendBtn.disabled = false;
   }
-}
-
-function generatePublicSpeakingContent(topicName) {
-  const content = `
-    Public speaking is an essential skill (திறமை) for effective communication.
-    It helps (உதவுகிறது) in expressing (வெளிப்படுத்துவது) ideas clearly (தெளிவாக).
-    Confidence (நம்பிக்கை) is the key (முக்கியம்) to engaging (ஈர்க்கும்) your audience.
-    Practice (பயிற்சி) regularly to improve (மேம்படுத்த) your delivery (வழங்கல்).
-    Use gestures (சைகைகள்) and maintain (பாதுகாத்தல்) eye contact (கண் தொடர்பு).
-    Avoid (தவிர்க்கவும்) filler words (நிரப்ப சொற்கள்) like "um" and "ah".
-    Structure (வடிவமைப்பு) your speech (பேச்சு) with an introduction (அறிமுகம்), body (உடல்), and conclusion (முடிவு).
-    Highlight (விளக்கவும்) key points (முக்கிய புள்ளிகள்) for clarity (தெளிவு).
-    Use pauses (இடைநிறுத்தங்கள்) effectively to emphasize (வலியுறுத்த) important ideas.
-    Always (எப்போதும்) analyze (ஆய்வு) your audience (கேட்போர்) and adapt (தகுந்துகொள்) your content accordingly (அதற்கேற்ப).
-  `;
-  return content.replace(/(\b\w+\b)/g, (word) => {
-    if (["helps", "expressing", "improve", "maintain", "avoid", "structure", "highlight", "emphasize", "analyze", "adapt"].includes(word)) {
-      return `<strong>${word}</strong> (meaning)`;
-    }
-    return word;
-  });
 }
 
 // ---------------------------------------------------------------
