@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------
-// Topic data — 28 topics, Beginner -> Advanced, English + Tamil
+// Topic data — 30 topics, Beginner -> Advanced, English + Tamil
 // ---------------------------------------------------------------
 const TOPICS = [
   { id: 1, en: "Parts of Speech", ta: "சொல் வகைகள்", level: "Beginner" },
@@ -31,9 +31,11 @@ const TOPICS = [
   { id: 27, en: "Writing Skills", ta: "எழுத்துத் திறன்கள்", level: "Advanced" },
   { id: 28, en: "Spoken English Practice", ta: "பேச்சு ஆங்கில பயிற்சி", level: "Advanced" },
   { id: 29, en: "Phrasal Verbs", ta: "மொழிப்புணர்ச்சி வினைச்சொற்கள்", level: "Advanced" },
+  { id: 30, en: "Public Speaking", ta: "பொதுப் பேச்சு", level: "Advanced" },
 ];
 
 const GROUPS = ["Beginner", "Intermediate", "Advanced"];
+const PUBLIC_SPEAKING_TOPIC_ID = 30;
 
 // ---------------------------------------------------------------
 // State
@@ -170,8 +172,8 @@ function renderSidebar() {
 }
 
 function updateProgressBar() {
-  document.getElementById("progressCount").textContent = `${completed.size} / 28`;
-  document.getElementById("progressFill").style.width = `${(completed.size / 28) * 100}%`;
+  document.getElementById("progressCount").textContent = `${completed.size} / 30`;
+  document.getElementById("progressFill").style.width = `${(completed.size / 30) * 100}%`;
 }
 
 // ---------------------------------------------------------------
@@ -201,16 +203,23 @@ function selectTopic(id) {
 
   if (!conversations[id] || conversations[id].length === 0) {
     conversations[id] = [];
-    if (apiKeyVerified) {
-      // Kick off with an automatic introduction from the tutor
-      sendToTutor(`Please introduce the topic "${topic.en}" to a Tamil-speaking beginner/intermediate English learner. Give a short, simple explanation with 2-3 real-time example sentences in English, each with its Tamil meaning.`, { silent: true });
-    } else {
+    if (!apiKeyVerified) {
       appendMessage(
         "bot",
         "**Add your free Groq API key** in the box on the left, then click **Verify**, to start this lesson.\n\n(இடதுபுறம் உள்ள பெட்டியில் உங்கள் இலவச Groq திறவுகோலைச் சேர்த்து 'Verify' அழுத்தவும்.)"
       );
       // Not saved into conversations[id] on purpose — once the key is
       // verified, selecting this topic again will still trigger the real intro.
+    } else if (topic.id === PUBLIC_SPEAKING_TOPIC_ID) {
+      // Public Speaking works differently: ask the learner for a subject first,
+      // instead of auto-generating an introduction.
+      appendMessage(
+        "bot",
+        "**Type any topic** you'd like a public speaking passage on — e.g. \"leadership\", \"climate change\", \"my school\".\n\nI'll share 10–20 lines, with the important verbs in **bold** and their Tamil meaning right after in brackets.\n\n(நீங்கள் பேச விரும்பும் தலைப்பை தட்டச்சு செய்யவும் — எ.கா. \"தலைமைத்துவம்\". முக்கியமான வினைச்சொற்கள் **தடிமனாக** காட்டப்பட்டு, அதற்கடுத்து அதன் தமிழ் அர்த்தம் அடைப்புக்குறிக்குள் தரப்படும்.)"
+      );
+    } else {
+      // Kick off with an automatic introduction from the tutor
+      sendToTutor(`Please introduce the topic "${topic.en}" to a Tamil-speaking beginner/intermediate English learner. Give a short, simple explanation with 2-3 real-time example sentences in English, each with its Tamil meaning.`, { silent: true });
     }
   }
 
