@@ -337,6 +337,60 @@ button{font-family:inherit;cursor:pointer;}
 #sendBtn:disabled{opacity:.5;cursor:default;}
 .chat-hint{font-size:12px;color:var(--ink-soft);margin:8px 0 0;font-family:var(--font-body-ta);}
 
+/* ---------- Voice Practice ---------- */
+.voice-controls{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:16px;
+  border-top:1px solid var(--line);
+  padding-top:16px;
+}
+.mic-btn{
+  background:var(--rust);
+  color:#fff;
+  border:none;
+  padding:12px 22px;
+  border-radius:999px;
+  font-weight:600;
+  font-size:14px;
+  white-space:nowrap;
+  transition:background .15s ease, transform .1s ease;
+}
+.mic-btn:hover{background:var(--indigo);}
+.mic-btn:active{transform:scale(.97);}
+.mic-btn:disabled{opacity:.5;cursor:default;}
+.mic-btn.recording{
+  background:var(--indigo);
+  animation:mic-pulse 1.2s ease-in-out infinite;
+}
+@keyframes mic-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(184,81,31,0.45);}
+  50%{box-shadow:0 0 0 9px rgba(184,81,31,0);}
+}
+.voice-status{
+  font-size:12.5px;
+  color:var(--ink-soft);
+  line-height:1.5;
+}
+.speak-btn{
+  display:inline-block;
+  margin-top:10px;
+  background:none;
+  border:1px solid var(--line);
+  color:var(--teal);
+  border-radius:999px;
+  padding:5px 13px;
+  font-size:12px;
+  font-weight:600;
+  font-family:var(--font-mono);
+}
+.speak-btn:hover{background:var(--paper-2);border-color:var(--teal);}
+
+@media (max-width:860px){
+  .voice-controls{flex-wrap:wrap;}
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width:860px){
   .app{grid-template-columns:1fr;}
