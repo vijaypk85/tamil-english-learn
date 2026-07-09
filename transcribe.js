@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
   }
 
   if (!audioBase64) {
-    res.status(400).json({ error: "Missing audio" });
+    res.status(400).json({ error: "missing_audio", message: "Missing audio" });
     return;
   }
 
@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
   try {
     audioBuffer = Buffer.from(audioBase64, "base64");
   } catch {
-    res.status(400).json({ error: "Invalid audio data" });
+    res.status(400).json({ error: "invalid_audio", message: "Invalid audio data" });
     return;
   }
 
@@ -79,7 +79,10 @@ module.exports = async (req, res) => {
         res.status(401).json({ error: "invalid_key", message: "Groq rejected this API key. Please re-verify it in the sidebar." });
         return;
       }
-      res.status(502).json({ error: "The transcription service returned an error. Please try again." });
+      res.status(502).json({
+        error: "groq_error",
+        message: `Groq returned an error (status ${groqRes.status}). Please try again.`,
+      });
       return;
     }
 
@@ -94,6 +97,9 @@ module.exports = async (req, res) => {
     res.status(200).json({ text });
   } catch (err) {
     console.error("Transcribe function failed:", err);
-    res.status(500).json({ error: "Something went wrong transcribing your recording." });
+    res.status(500).json({
+      error: "server_error",
+      message: `Something went wrong transcribing your recording: ${err?.message || "unknown error"}`,
+    });
   }
 };
