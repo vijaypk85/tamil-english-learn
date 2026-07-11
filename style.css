@@ -167,6 +167,11 @@ button{font-family:inherit;cursor:pointer;}
   width:4px;
   background:linear-gradient(var(--rust),var(--teal));
 }
+.verb-card.loading{opacity:.6;}
+.verb-card.loading .verb-word-en{color:var(--ink-soft);}
+.verb-card.error::before{background:var(--rust);}
+.verb-card.error .verb-word-en{color:var(--rust);font-size:20px;}
+.verb-card.error .verb-meaning{margin-bottom:0;}
 .verb-word-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
 .verb-word-en{
   font-family:var(--font-display-en);
