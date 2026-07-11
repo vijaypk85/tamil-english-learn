@@ -37,6 +37,14 @@
       <a class="key-help" href="https://console.groq.com/keys" target="_blank" rel="noopener">Get a free key at console.groq.com →</a>
     </div>
 
+    <button type="button" class="verb-nav-btn" id="verbNavBtn">
+      <span class="verb-nav-icon">📖</span>
+      <span class="verb-nav-text">
+        <span class="verb-nav-en">Verb of the Day</span>
+        <span class="verb-nav-ta">இன்றைய வினைச்சொல்</span>
+      </span>
+    </button>
+
     <div class="progress-wrap">
       <div class="progress-label">
         <span id="progressCount">0 / 32</span> topics threaded
@@ -88,6 +96,34 @@
       </div>
 
       <p class="chat-hint" id="chatHint">உங்கள் கேள்வியை தமிழிலோ ஆங்கிலத்திலோ எழுதலாம் — you can ask in Tamil or English.</p>
+    </section>
+
+    <section class="verb-view" id="verbView" hidden>
+      <header class="verb-header">
+        <div class="verb-header-titles">
+          <h2 class="verb-header-en">Verb of the Day</h2>
+          <p class="verb-header-ta">இன்றைய வினைச்சொல்</p>
+        </div>
+      </header>
+
+      <div class="verb-card" id="verbCard">
+        <div class="verb-word-row">
+          <span class="verb-word-en" id="verbWordEn">—</span>
+          <span class="verb-word-ta" id="verbWordTa">—</span>
+        </div>
+        <p class="verb-meaning" id="verbMeaning">—</p>
+
+        <div class="verb-sentence-block">
+          <p class="verb-sentence-en" id="verbSentenceEn">—</p>
+          <p class="verb-sentence-ta" id="verbSentenceTa">—</p>
+        </div>
+      </div>
+
+      <div class="verb-refresh-row">
+        <button type="button" class="verb-refresh-btn" id="verbRefreshBtn">🔄 New verb</button>
+        <span class="verb-refresh-count" id="verbRefreshCount">10 refreshes left today</span>
+      </div>
+      <p class="verb-refresh-hint" id="verbRefreshHint">ஒரு நாளைக்கு அதிகபட்சம் 10 முறை புதிய வினைச்சொல் பார்க்கலாம்.</p>
     </section>
 
   </main>

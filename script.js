@@ -42,6 +42,43 @@ const VOICE_PRACTICE_TOPIC_ID = 31;
 const PROFESSIONAL_INTRO_TOPIC_ID = 32;
 
 // ---------------------------------------------------------------
+// Verb of the Day — curated verb + meaning + example sentence + Tamil
+// ---------------------------------------------------------------
+const VERBS = [
+  { en: "achieve", ta: "அடை", meaning: "To successfully complete or reach a goal.", sentence: "She worked hard to achieve her dreams.", sentenceTa: "அவள் தன் கனவுகளை அடைய கடினமாக உழைத்தாள்." },
+  { en: "improve", ta: "மேம்படுத்து", meaning: "To make something better than before.", sentence: "He wants to improve his English speaking.", sentenceTa: "அவன் தன் ஆங்கிலப் பேச்சை மேம்படுத்த விரும்புகிறான்." },
+  { en: "decide", ta: "முடிவு செய்", meaning: "To choose something after thinking about it.", sentence: "We decided to start the meeting early.", sentenceTa: "நாங்கள் கூட்டத்தை சீக்கிரம் தொடங்க முடிவு செய்தோம்." },
+  { en: "explain", ta: "விளக்கு", meaning: "To make something clear or easy to understand.", sentence: "Can you explain this rule again?", sentenceTa: "இந்த விதியை மீண்டும் விளக்க முடியுமா?" },
+  { en: "suggest", ta: "பரிந்துரை", meaning: "To offer an idea or plan for others to consider.", sentence: "She suggested a new way to solve the problem.", sentenceTa: "அவள் பிரச்சினையைத் தீர்க்க ஒரு புதிய வழியை பரிந்துரைத்தாள்." },
+  { en: "manage", ta: "நிர்வகி", meaning: "To control or be in charge of something.", sentence: "He manages a small team at work.", sentenceTa: "அவன் வேலையில் ஒரு சிறிய குழுவை நிர்வகிக்கிறான்." },
+  { en: "prepare", ta: "தயார்படுத்து", meaning: "To get something or someone ready.", sentence: "They are preparing for the exam.", sentenceTa: "அவர்கள் தேர்வுக்கு தயார் ஆகிறார்கள்." },
+  { en: "avoid", ta: "தவிர்", meaning: "To stay away from something or keep from happening.", sentence: "Try to avoid junk food.", sentenceTa: "குப்பை உணவைத் தவிர்க்க முயற்சி செய்." },
+  { en: "encourage", ta: "ஊக்குவி", meaning: "To give someone confidence or support to do something.", sentence: "Her teacher encouraged her to keep writing.", sentenceTa: "அவள் ஆசிரியர் அவளை தொடர்ந்து எழுத ஊக்குவித்தார்." },
+  { en: "handle", ta: "கையாள்", meaning: "To deal with a situation, problem, or task.", sentence: "He handled the customer's complaint calmly.", sentenceTa: "அவன் வாடிக்கையாளரின் புகாரை அமைதியாக கையாண்டான்." },
+  { en: "arrange", ta: "ஏற்பாடு செய்", meaning: "To plan or organize something in advance.", sentence: "She arranged a surprise party for him.", sentenceTa: "அவள் அவனுக்காக ஒரு ஆச்சரிய விருந்தை ஏற்பாடு செய்தாள்." },
+  { en: "complete", ta: "முழுமையாக்கு", meaning: "To finish doing or making something.", sentence: "Please complete the form before submitting.", sentenceTa: "சமர்ப்பிக்கும் முன் படிவத்தை முழுமையாக்கவும்." },
+  { en: "discuss", ta: "விவாதி", meaning: "To talk about something with other people.", sentence: "Let's discuss this plan tomorrow.", sentenceTa: "இந்தத் திட்டத்தை நாளை விவாதிப்போம்." },
+  { en: "review", ta: "மறுஆய்வு செய்", meaning: "To look at or check something again carefully.", sentence: "The manager reviewed the report before sending it.", sentenceTa: "மேலாளர் அறிக்கையை அனுப்பும் முன் மறுஆய்வு செய்தார்." },
+  { en: "apologize", ta: "மன்னிப்பு கேள்", meaning: "To say sorry for something you did wrong.", sentence: "He apologized for being late.", sentenceTa: "தாமதமானதற்கு அவன் மன்னிப்பு கேட்டான்." },
+  { en: "recommend", ta: "பரிந்துரை செய்", meaning: "To suggest that something or someone is good or suitable.", sentence: "I recommend this book to every learner.", sentenceTa: "இந்தப் புத்தகத்தை ஒவ்வொரு கற்பவருக்கும் பரிந்துரைக்கிறேன்." },
+  { en: "accomplish", ta: "சாதி", meaning: "To successfully finish or achieve something.", sentence: "She accomplished a lot this year.", sentenceTa: "இந்த ஆண்டு அவள் நிறைய சாதித்தாள்." },
+  { en: "negotiate", ta: "பேச்சுவார்த்தை நடத்து", meaning: "To talk with someone to reach an agreement.", sentence: "They negotiated a better salary.", sentenceTa: "அவர்கள் சிறந்த சம்பளத்திற்காக பேச்சுவார்த்தை நடத்தினர்." },
+  { en: "contribute", ta: "பங்களி", meaning: "To give something, like time, ideas, or money, to help.", sentence: "Everyone contributed ideas to the project.", sentenceTa: "அனைவரும் திட்டத்திற்கு யோசனைகளை பங்களித்தனர்." },
+  { en: "adapt", ta: "தகவமைத்துக்கொள்", meaning: "To change your behaviour to suit a new situation.", sentence: "New employees must adapt quickly.", sentenceTa: "புதிய பணியாளர்கள் விரைவாக தகவமைத்துக்கொள்ள வேண்டும்." },
+  { en: "resolve", ta: "தீர்வு காண்", meaning: "To find a solution to a problem or disagreement.", sentence: "They resolved the issue peacefully.", sentenceTa: "அவர்கள் பிரச்சினையை அமைதியாக தீர்வு கண்டனர்." },
+  { en: "maintain", ta: "பராமரி", meaning: "To keep something in good condition, or keep it going.", sentence: "It's important to maintain a healthy diet.", sentenceTa: "ஆரோக்கியமான உணவை பராமரிப்பது முக்கியம்." },
+  { en: "inspire", ta: "ஊக்கமளி", meaning: "To make someone feel excited or motivated to do something.", sentence: "Her story inspired many students.", sentenceTa: "அவள் கதை பல மாணவர்களை ஊக்கமளித்தது." },
+  { en: "postpone", ta: "ஒத்திவை", meaning: "To delay something to a later time.", sentence: "We had to postpone the meeting.", sentenceTa: "நாங்கள் கூட்டத்தை ஒத்திவைக்க வேண்டியிருந்தது." },
+  { en: "confirm", ta: "உறுதிப்படுத்து", meaning: "To make sure something is true or will definitely happen.", sentence: "Please confirm your appointment by email.", sentenceTa: "தயவுசெய்து மின்னஞ்சல் மூலம் உங்கள் சந்திப்பை உறுதிப்படுத்தவும்." },
+  { en: "assume", ta: "கருது", meaning: "To think something is true without checking it first.", sentence: "Don't assume he knows the answer.", sentenceTa: "அவனுக்கு பதில் தெரியும் என்று கருதாதே." },
+  { en: "deliver", ta: "வழங்கு", meaning: "To bring or hand over something to someone.", sentence: "The company delivers orders within two days.", sentenceTa: "நிறுவனம் இரண்டு நாட்களுக்குள் ஆர்டர்களை வழங்குகிறது." },
+  { en: "involve", ta: "ஈடுபடுத்து", meaning: "To include someone or something as a necessary part.", sentence: "The project involves three departments.", sentenceTa: "இந்தத் திட்டம் மூன்று துறைகளை ஈடுபடுத்துகிறது." },
+  { en: "overcome", ta: "வெற்றி கொள்", meaning: "To successfully deal with a difficulty or problem.", sentence: "She overcame her fear of public speaking.", sentenceTa: "அவள் பொதுவில் பேசும் பயத்தை வெற்றி கொண்டாள்." },
+  { en: "convince", ta: "நம்ப வை", meaning: "To make someone believe something or agree to do something.", sentence: "He convinced his friend to join the class.", sentenceTa: "அவன் தன் நண்பரை வகுப்பில் சேர நம்ப வைத்தான்." },
+];
+const MAX_VERB_REFRESHES = 10;
+
+// ---------------------------------------------------------------
 // State
 // ---------------------------------------------------------------
 let currentTopic = null;
@@ -185,6 +222,8 @@ function updateProgressBar() {
 // ---------------------------------------------------------------
 const heroEl = document.getElementById("hero");
 const topicViewEl = document.getElementById("topicView");
+const verbViewEl = document.getElementById("verbView");
+const verbNavBtn = document.getElementById("verbNavBtn");
 const chatThreadEl = document.getElementById("chatThread");
 
 function selectTopic(id) {
@@ -197,6 +236,8 @@ function selectTopic(id) {
 
   heroEl.hidden = true;
   topicViewEl.hidden = false;
+  verbViewEl.hidden = true;
+  verbNavBtn.classList.remove("active");
 
   document.getElementById("topicId").textContent = String(topic.id).padStart(2, "0");
   document.getElementById("topicEn").textContent = topic.en;
@@ -531,6 +572,104 @@ function speakText(text) {
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utter);
 }
+
+// ---------------------------------------------------------------
+// Verb of the Day: one verb shown per day, with up to 10 refreshes/day
+// ---------------------------------------------------------------
+const verbRefreshBtn = document.getElementById("verbRefreshBtn");
+const verbRefreshCountEl = document.getElementById("verbRefreshCount");
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+
+function dayOfYearIndex(len) {
+  const d = new Date();
+  const start = new Date(d.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((d - start) / 86400000);
+  return ((dayOfYear % len) + len) % len;
+}
+
+function loadVerbState() {
+  try {
+    const raw = localStorage.getItem("verb-of-day");
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveVerbState() {
+  try {
+    localStorage.setItem("verb-of-day", JSON.stringify(verbState));
+  } catch {}
+}
+
+let verbState = loadVerbState();
+if (verbState.date !== todayKey() || typeof verbState.index !== "number") {
+  // New day (or first ever visit): reset the refresh count and pick the
+  // day's verb deterministically, so everyone sees the same "verb of the
+  // day" until they choose to refresh.
+  verbState = { date: todayKey(), refreshCount: 0, index: dayOfYearIndex(VERBS.length) };
+  saveVerbState();
+}
+
+function renderVerbCard() {
+  const verb = VERBS[verbState.index];
+  document.getElementById("verbWordEn").textContent = verb.en;
+  document.getElementById("verbWordTa").textContent = verb.ta;
+  document.getElementById("verbMeaning").textContent = verb.meaning;
+  document.getElementById("verbSentenceEn").textContent = verb.sentence;
+  document.getElementById("verbSentenceTa").textContent = verb.sentenceTa;
+
+  const remaining = Math.max(0, MAX_VERB_REFRESHES - verbState.refreshCount);
+  verbRefreshCountEl.textContent =
+    remaining > 0
+      ? `${remaining} refresh${remaining === 1 ? "" : "es"} left today`
+      : "No refreshes left — come back tomorrow";
+  verbRefreshBtn.disabled = remaining <= 0;
+}
+
+function refreshVerb() {
+  // Guard against the date changing while the tab was left open overnight.
+  if (verbState.date !== todayKey()) {
+    verbState = { date: todayKey(), refreshCount: 0, index: dayOfYearIndex(VERBS.length) };
+    saveVerbState();
+    renderVerbCard();
+    return;
+  }
+  if (verbState.refreshCount >= MAX_VERB_REFRESHES) {
+    renderVerbCard();
+    return;
+  }
+
+  let nextIndex = verbState.index;
+  if (VERBS.length > 1) {
+    while (nextIndex === verbState.index) {
+      nextIndex = Math.floor(Math.random() * VERBS.length);
+    }
+  }
+  verbState.index = nextIndex;
+  verbState.refreshCount += 1;
+  saveVerbState();
+  renderVerbCard();
+}
+
+function showVerbView() {
+  if (isRecording) stopRecording();
+  currentTopic = null;
+  heroEl.hidden = true;
+  topicViewEl.hidden = true;
+  verbViewEl.hidden = false;
+  renderSidebar(); // clears any "active" highlight on the topic list
+  verbNavBtn.classList.add("active");
+  renderVerbCard();
+  document.getElementById("sidebar").classList.remove("open");
+}
+
+verbNavBtn.addEventListener("click", showVerbView);
+verbRefreshBtn.addEventListener("click", refreshVerb);
 
 // ---------------------------------------------------------------
 // Mobile sidebar toggle

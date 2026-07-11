@@ -120,6 +120,121 @@ button{font-family:inherit;cursor:pointer;}
 .key-help:hover{text-decoration:underline;}
 
 .progress-wrap{padding:2px 2px 4px;}
+
+/* ---------- Verb of the Day: sidebar nav button ---------- */
+.verb-nav-btn{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  background:rgba(47,111,107,0.14);
+  border:1px solid rgba(47,111,107,0.35);
+  border-radius:10px;
+  padding:10px 12px;
+  text-align:left;
+  color:var(--paper);
+  transition:background .15s ease, border-color .15s ease;
+}
+.verb-nav-btn:hover{background:rgba(47,111,107,0.24);border-color:var(--teal);}
+.verb-nav-btn.active{background:rgba(47,111,107,0.3);border-color:var(--teal);}
+.verb-nav-icon{font-size:18px;line-height:1;}
+.verb-nav-text{display:flex;flex-direction:column;}
+.verb-nav-en{font-family:var(--font-display-en);font-weight:600;font-size:13px;}
+.verb-nav-ta{font-family:var(--font-body-ta);font-size:11px;color:var(--gold-dim);}
+
+/* ---------- Verb of the Day: main section ---------- */
+.verb-view{
+  max-width:640px;
+  margin:0 auto;
+  padding:8vh 32px 40px;
+}
+.verb-header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px;}
+.verb-header-en{font-family:var(--font-display-en);font-weight:600;font-size:26px;margin:0;color:var(--indigo);}
+.verb-header-ta{font-family:var(--font-body-ta);font-size:14.5px;color:var(--teal);margin:4px 0 0;}
+
+.verb-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:28px 26px;
+  position:relative;
+  overflow:hidden;
+}
+.verb-card::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:4px;
+  background:linear-gradient(var(--rust),var(--teal));
+}
+.verb-word-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+.verb-word-en{
+  font-family:var(--font-display-en);
+  font-weight:700;
+  font-size:clamp(26px,4vw,34px);
+  color:var(--indigo);
+}
+.verb-word-ta{
+  font-family:var(--font-display-ta);
+  font-size:20px;
+  color:var(--teal);
+}
+.verb-meaning{
+  font-size:15px;
+  line-height:1.6;
+  color:var(--ink-soft);
+  margin:10px 0 20px;
+}
+.verb-sentence-block{
+  background:var(--paper-2);
+  border-radius:10px;
+  padding:14px 16px;
+}
+.verb-sentence-en{
+  font-size:14.5px;
+  line-height:1.6;
+  color:var(--ink);
+  margin:0 0 6px;
+  font-style:italic;
+}
+.verb-sentence-ta{
+  font-family:var(--font-body-ta);
+  font-size:14px;
+  line-height:1.6;
+  color:var(--teal);
+  margin:0;
+}
+
+.verb-refresh-row{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:20px;
+  flex-wrap:wrap;
+}
+.verb-refresh-btn{
+  background:var(--rust);
+  color:#fff;
+  border:none;
+  padding:11px 20px;
+  border-radius:999px;
+  font-weight:600;
+  font-size:14px;
+  transition:background .15s ease, transform .1s ease;
+}
+.verb-refresh-btn:hover{background:var(--indigo);}
+.verb-refresh-btn:active{transform:scale(.97);}
+.verb-refresh-btn:disabled{opacity:.5;cursor:default;transform:none;}
+.verb-refresh-count{
+  font-family:var(--font-mono);
+  font-size:12px;
+  color:var(--ink-soft);
+}
+.verb-refresh-hint{font-size:12px;color:var(--ink-soft);margin:10px 0 0;font-family:var(--font-body-ta);}
+
+@media (max-width:860px){
+  .verb-view{padding:6vh 20px 30px;}
+}
 .progress-label{font-size:11px;letter-spacing:.04em;color:var(--gold-dim);margin-bottom:8px;font-family:var(--font-mono);text-transform:uppercase;}
 .progress-track{height:4px;background:rgba(247,243,234,0.14);border-radius:4px;overflow:hidden;}
 .progress-fill{height:100%;width:0%;background:var(--gold);transition:width .4s ease;}
