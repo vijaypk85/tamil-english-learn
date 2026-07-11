@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------
-// Topic data — 31 topics, Beginner -> Advanced, English + Tamil
+// Topic data — 32 topics, Beginner -> Advanced, English + Tamil
 // ---------------------------------------------------------------
 const TOPICS = [
   { id: 1, en: "Parts of Speech", ta: "சொல் வகைகள்", level: "Beginner" },
@@ -33,11 +33,13 @@ const TOPICS = [
   { id: 29, en: "Phrasal Verbs", ta: "மொழிப்புணர்ச்சி வினைச்சொற்கள்", level: "Advanced" },
   { id: 30, en: "Public Speaking", ta: "பொதுப் பேச்சு", level: "Advanced" },
   { id: 31, en: "Voice Practice", ta: "குரல் பயிற்சி", level: "Advanced" },
+  { id: 32, en: "Professional Self Intro", ta: "தொழில்முறை சுய அறிமுகம்", level: "Advanced" },
 ];
 
 const GROUPS = ["Beginner", "Intermediate", "Advanced"];
 const PUBLIC_SPEAKING_TOPIC_ID = 30;
 const VOICE_PRACTICE_TOPIC_ID = 31;
+const PROFESSIONAL_INTRO_TOPIC_ID = 32;
 
 // ---------------------------------------------------------------
 // State
@@ -174,8 +176,8 @@ function renderSidebar() {
 }
 
 function updateProgressBar() {
-  document.getElementById("progressCount").textContent = `${completed.size} / 31`;
-  document.getElementById("progressFill").style.width = `${(completed.size / 31) * 100}%`;
+  document.getElementById("progressCount").textContent = `${completed.size} / 32`;
+  document.getElementById("progressFill").style.width = `${(completed.size / 32) * 100}%`;
 }
 
 // ---------------------------------------------------------------
@@ -231,6 +233,14 @@ function selectTopic(id) {
       appendMessage(
         "bot",
         "**Tap the mic button below and speak a sentence** — in English, or mixed with Tamil, whatever feels natural. I'll correct the grammar and tone, and you can tap **Play** on my reply to hear the correct version spoken aloud.\n\n(கீழே உள்ள மைக் பொத்தானைத் தட்டி ஒரு வாக்கியம் பேசுங்கள். நான் இலக்கணத்தையும் தொனியையும் திருத்துவேன்.)"
+      );
+    } else if (topic.id === PROFESSIONAL_INTRO_TOPIC_ID) {
+      // Professional Self Intro works like a mock interview: ask for the
+      // learner's profession first, then run an escalating Q&A, correcting
+      // each answer, instead of auto-generating an introduction.
+      appendMessage(
+        "bot",
+        "**Type your profession or job role** — e.g. \"software engineer\", \"nurse\", \"final-year student\", \"sales executive\".\n\nI'll run this like a real interview: starting with **\"Tell me about yourself\"**, then asking questions that get more advanced each time. Whenever you answer, I'll correct your English first, then ask the next question.\n\n(உங்கள் தொழில் அல்லது வேலையை தட்டச்சு செய்யவும். ஒரு நேர்காணல் போல கேள்விகள் கேட்பேன், உங்கள் பதில்களை திருத்துவேன்.)"
       );
     } else {
       // Kick off with an automatic introduction from the tutor
